@@ -1,55 +1,9 @@
+import turtle
+from random import choice, randint
 from pygame import *
 from random import randint
 from time import time as timer
-import turtle
 
-window = turtle.Screen()
-window.title("Ping-Pong")
-window.setup(width=1.0,height=1.0)
-window.bgcolor("black")
-
-border = turtle.Turtle()
-border.speed(0)
-border.color('green')
-border.begin_fill()
-border.goto(-500,300)
-border.goto(500,300)
-border.goto(500,-300)
-border.goto(-500,-300)
-border.goto(-500,300)
-border.end_fill()
-
-border.goto(0,300)
-
-
-window.mainloop()
-# фоновая музыка
-mixer.init()
-mixer.music.load('space.ogg')
-mixer.music.play()
-fire_sound = mixer.Sound('fire.ogg')
-# шрифты и надписи
-font.init()
-font1 = font.Font(None, 80)
-win = font1.render('ПОБЕДА! :-)',True,(0,255,0))
-lose = font1.render('ПРОИГРЫШ :-(',True,(255,0,0))
-font2 = font.Font(None, 36)
- 
-pygame.init()
-
-font20 = pygame.font.Font('freesansbold.ttf', 20)
-
-BLACK = (0, 0, 0)
-WHITE = (255, 255, 255)
-GREEN = (0, 255, 0)
- 
-WIDTH, HEIGHT = 900, 600
-screen = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption("Pong")
- 
-clock = pygame.time.Clock()    
-FPS = 60
- 
 class GameSprite(sprite.Sprite):
     def __init__(self, player_image, player_x, player_y, player_speed, player_width, player_height):
         super().__init__()
@@ -61,210 +15,146 @@ class GameSprite(sprite.Sprite):
  
     def reset(self):
         window.blit(self.image,(self.rect.x,self.rect.y))
- 
- 
-class hero:
-    def __init__(self, posx, posy, width, height, speed, color):
-        self.posx = posx
-        self.posy = posy
-        self.width = width
-        self.height = height
-        self.speed = speed
-        self.color = color
-        self.geekRect = pygame.Rect(posx, posy, width, height)
-        self.geek = pygame.draw.rect(screen, self.color, self.geekRect)
-        hero = 'ifo.png'
+rocket = 'ufo.png'
+rocket = 'ufo.png'
+window = turtle.Screen()
+window.title("Ping-Pong")
+window.setup(width=1.0,height=1.0)
+window.bgcolor("green")
+window.tracer(2)
 
-    def display(self):
-        self.geek = pygame.draw.rect(screen, self.color, self.geekRect)
- 
-    def update(self, yFac):
-        self.posy = self.posy + self.speed*yFac
- 
-        if self.posy <= 0:
-            self.posy = 0
-        elif self.posy + self.height >= HEIGHT:
-            self.posy = HEIGHT-self.height
- 
-        self.geekRect = (self.posx, self.posy, self.width, self.height)
- 
-    def displayScore(self, text, score, x, y, color):
-        text = font20.render(text+str(score), True, color)
-        textRect = text.get_rect()
-        textRect.center = (x, y)
- 
-        screen.blit(text, textRect)
- 
-    def getRect(self):
-        return self.geekRect
- 
 
- 
-class asteroid:
-    def __init__(self, posx, posy, radius, speed, color):
-        self.posx = posx
-        self.posy = posy
-        self.radius = radius
-        self.speed = speed
-        self.color = color
-        self.xFac = 1
-        self.yFac = -1
-        self.asteroid = pygame.draw.circle(
-            screen, self.color, (self.posx, self.posy), self.radius)
-        self.firstTime = 1
-        asteroid ='asteroid.png'
- 
+border = turtle.Turtle()
+border.speed(0)
+border.color('white')
+border.begin_fill()
+border.goto(-500,300)
+border.goto(500,300)
+border.goto(500,-300)
+border.goto(-500,-300)
+border.goto(-500,300)
+border.end_fill()
+
+
+rocket_a = turtle.Turtle()
+rocket_a.color('red')
+rocket_a.shape('square')
+rocket_a.shapesize(stretch_len=1,stretch_wid=5)
+rocket_a.penup()
+rocket_a.goto(-450,0)
+
+rocket_b = turtle.Turtle()
+rocket_b.speed(0)
+rocket_b.shape("square")
+rocket_b.color("blue")
+rocket_b.shapesize(stretch_wid=5, stretch_len=1)
+rocket_b.penup()
+rocket_b.goto(450, 0)
+
+
+FONT = ("Arial", 44)
+score_a = 0
+s1 = turtle.Turtle(visible=False)
+s1.color('red')
+s1.penup()
+s1.setposition(-550, -30)
+s1.write(score_a, font=FONT)
+
+score_b = 0
+s2 = turtle.Turtle(visible=False)
+s2.color('blue')
+s2.penup()
+s2.setposition(550, -40)
+s2.write(score_a, font=FONT)
+
+def move_up():
+     y  = rocket_a.ycor() + 10
+     if y > 250:
+         y = 250
+     rocket_a.sety(y)
+
+
+def move_down():
+    y = rocket_a.ycor() - 10
+    if y < -250:
+        y = -250
+    rocket_a.sety(y)
+
+
+def move_up_b():
+    y = rocket_b.ycor() + 10
+    if y > 250:
+        y = 250
+    rocket_b.sety(y)
+
+
+def move_down_b():
+    y = rocket_b.ycor() - 10
+    if y < -250:
+        y = -250
+    rocket_b.sety(y)
+
+
+
+class ball(GameSprite):
     def update(self):
-        self.posx += self.speed*self.xFac
-        self.posy += self.speed*self.yFac
-        if self.posy <= 0 or self.posy >= HEIGHT:
-            self.yFac *= -1
- 
-        if self.posx <= 0 and self.firstTime:
-            self.firstTime = 0
-            return 1
-        elif self.posx >= WIDTH and self.firstTime:
-            self.firstTime = 0
-            return -1
-        else:
-            return 0
- 
-    def reset(self):
-        self.posx = WIDTH//2
-        self.posy = HEIGHT//2
-        self.xFac *= -1
-        self.firstTime = 1
- s
-    def hit(self):
-        self.xFac *= -1
- 
-    def getRect(self):
-        return self.ball
- 
-
- 
- 
-def main():
-    running = True
- 
-    geek1 = Striker(20, 0, 10, 100, 10, GREEN)
-    geek2 = Striker(WIDTH-30, 0, 10, 100, 10, GREEN)
-    asteroid = asteroid(WIDTH//2, HEIGHT//2, 7, 7, WHITE)
- 
-    listOfGeeks = [geek1, geek2]
-
-    geek1Score, geek2Score = 0, 0
-    geek1YFac, geek2YFac = 0, 0
- 
-    while running:
-        screen.fill(BLACK)
-
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                running = False
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_UP:
-                    geek2YFac = -1
-                if event.key == pygame.K_DOWN:
-                    geek2YFac = 1
-                if event.key == pygame.K_w:
-                    geek1YFac = -1
-                if event.key == pygame.K_s:
-                    geek1YFac = 1
-            if event.type == pygame.KEYUP:
-                if event.key == pygame.K_UP or event.key == pygame.K_DOWN:
-                    geek2YFac = 0
-                if event.key == pygame.K_w or event.key == pygame.K_s:
-                    geek1YFac = 0
-
-        for geek in listOfGeeks:
-            if pygame.Rect.colliderect(ball.getRect(), geek.getRect()):
-                ball.hit()
- 
-        geek1.update(geek1YFac)
-        geek2.update(geek2YFac)
-        point = asteroid.update()
-
-        if point == -1:
-            geek1Score += 1
-        elif point == 1:
-            geek2Score += 1
- 
-        if point:   
-            ball.reset()
-
-        geek1.display()
-        geek2.display()
-        asteroid.display()
- 
-
-        geek1.displayScore("Geek_1 : ", 
-                           geek1Score, 100, 20, WHITE)
-        geek2.displayScore("Geek_2 : ", 
-                           geek2Score, WIDTH-100, 20, WHITE)
- 
-        pygame.display.update()
-        clock.tick(FPS)     
-            if finish == False:
-        # обновляем фон
-        window.blit(background, (0,0))
-        # пишем текст на экране
-        text_score = font2.render('Счёт: '+str(score),True,(200,255,200))
-        window.blit(text_score,(10,20))
-        text_lost = font2.render('Пропущено: '+str(lost),True,(200,255,200))
-        window.blit(text_lost,(10,50))
-        siths.draw(window)
-        asteroids.draw(window)
-        bullets.draw(window)
-        # производим движения спрайтов
-        jedi.update()
-        siths.update()
-        asteroids.update()
-        bullets.update()
-        # обновляем их в новом местоположении при каждой итерации цикла
-        jedi.reset()
-
-        if reload_time == True:
-            cur_time = timer()
-            if cur_time - last_time < 3:
-                reload_text = font2.render('Перезарядка!...',1,(33,0,0))
-                window.blit(reload_text,(200,350))
-            else:
-                reload_time = False
-                num_fire = 0
-
-        collides = sprite.groupcollide(siths,bullets,True,True)
-        for c in collides:
-            score += 1
-            sith = Sith(sith_img,randint(0,win_width-80),-50,randint(1,5),80,50)
-            siths.add(sith)
- 
-        if sprite.spritecollide(jedi,siths,False):
-            lifes -= 1
-        # проигрыш
-        if lifes == 0 or lost >= 10:
-            finish = True
-            window.blit(lose,(150,200))
-        # победа
-        if score >= 20:
-            finish = True
-            window.blit(win,(150,200))
-        display.update()
-    else:
-        time.delay(3000)
-        finish = False
-        score = 0
-        lifes = 1
-        lost = 0
-        for b in bullets:
-            b.kill()
-        for s in siths:
-            s.kill()
-        for i in range(5):
-            sith = Sith(sith_img,randint(0,win_width-80),-50,randint(1,5),80,50)
-            siths.add(sith)
-        # цикл срабатывает каждую 0.05 секунды
-    time.delay(50)
+        global lost
+        self.rect.y += self.speed
+        if self.rect.y > win_height:
+            self.rect.x = randint(0,win_width-80)
+            self.rect.y = -50
+            self.speed = randint(1,5)
+            lost += 1
+ball = 'asteroid.png'
+ball = turtle.Turtle()
+ball.shape('circle')
+ball.speed(-10)
+ball.color('green')
+ball.dx = -1
+ball.dy = -1
+ball.penup()
 
 
-    main()
+window.listen()
+window.onkeypress(move_up, "w")
+window.onkeypress(move_down, "s")
+window.onkeypress(move_up_b, "Up")
+window.onkeypress(move_down_b, "Down")
+
+while True:
+    window.update()
+
+    ball.setx(ball.xcor() + ball.dx)
+    ball.sety(ball.ycor() + ball.dy)
+
+    if ball.ycor() >= 290:
+        ball.dy = -ball.dy
+
+    if ball.ycor() <= -290:
+        ball.dy = -ball.dy
+
+    if ball.xcor() >= 490:
+        score_b += 1
+        s2.clear()
+        s2.write(score_b, font=FONT)
+        ball.goto(0,randint(-150,150))
+        ball.dx = choice([-4,-3,-2, 2,3,4])
+        ball.dy = choice([-4,-3,-2, 2,3,4])
+
+    if ball.xcor() <= -490:
+        score_a += 1
+        s1.clear()
+        s1.write(score_a, font=FONT)
+        ball.goto(0,randint(-150,150))
+        ball.dx = choice([-4,-3,-2, 2,3,4])
+        ball.dy = choice([-4,-3,-2, 2,3,4])
+
+    if ball.ycor() >= rocket_b.ycor()-50 and ball.ycor() <= rocket_b.ycor()+50 \
+        and ball.xcor() >= rocket_b.xcor()-5 and ball.xcor() <= rocket_b.xcor()+5:
+        ball.dx = -ball.dx
+
+    if ball.ycor() >= rocket_a.ycor()-50 and ball.ycor() <= rocket_a.ycor()+50 \
+        and ball.xcor() >= rocket_a.xcor()-5 and ball.xcor() <= rocket_a.xcor()+5:
+        ball.dx = -ball.dx
+
+window.mainloop()
