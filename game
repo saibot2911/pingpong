@@ -51,6 +51,7 @@ class hero:
         self.color = color
         self.geekRect = pygame.Rect(posx, posy, width, height)
         self.geek = pygame.draw.rect(screen, self.color, self.geekRect)
+        hero = 'ifo.png'
 
     def display(self):
         self.geek = pygame.draw.rect(screen, self.color, self.geekRect)
@@ -89,7 +90,7 @@ class asteroid:
         self.asteroid = pygame.draw.circle(
             screen, self.color, (self.posx, self.posy), self.radius)
         self.firstTime = 1
-        asteroid = asteroid.png
+        asteroid ='asteroid.png'
  
     def update(self):
         self.posx += self.speed*self.xFac
@@ -182,8 +183,5 @@ def main():
  
         pygame.display.update()
         clock.tick(FPS)     
- 
- 
-if __name__ == "__main__":
+
     main()
-    pygame.quit()
