@@ -1,4 +1,17 @@
-import pygame
+from pygame import *
+from random import randint
+from time import time as timer
+# фоновая музыка
+mixer.init()
+mixer.music.load('space.ogg')
+mixer.music.play()
+fire_sound = mixer.Sound('fire.ogg')
+# шрифты и надписи
+font.init()
+font1 = font.Font(None, 80)
+win = font1.render('ПОБЕДА! :-)',True,(0,255,0))
+lose = font1.render('ПРОИГРЫШ :-(',True,(255,0,0))
+font2 = font.Font(None, 36)
  
 pygame.init()
 
@@ -13,12 +26,12 @@ screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Pong")
  
 clock = pygame.time.Clock()    
-FPS = 30
+FPS = 60
  
-# Striker class
+
  
  
-class Striker:
+class hero:
     def __init__(self, posx, posy, width, height, speed, color):
         self.posx = posx
         self.posy = posy
@@ -54,7 +67,7 @@ class Striker:
  
 
  
-class Ball:
+class asteroid:
     def __init__(self, posx, posy, radius, speed, color):
         self.posx = posx
         self.posy = posy
@@ -63,13 +76,10 @@ class Ball:
         self.color = color
         self.xFac = 1
         self.yFac = -1
-        self.ball = pygame.draw.circle(
+        self.asteroid = pygame.draw.circle(
             screen, self.color, (self.posx, self.posy), self.radius)
         self.firstTime = 1
- 
-    def display(self):
-        self.ball = pygame.draw.circle(
-            screen, self.color, (self.posx, self.posy), self.radius)
+        asteroid = asteroid.png
  
     def update(self):
         self.posx += self.speed*self.xFac
@@ -106,7 +116,7 @@ def main():
  
     geek1 = Striker(20, 0, 10, 100, 10, GREEN)
     geek2 = Striker(WIDTH-30, 0, 10, 100, 10, GREEN)
-    ball = Ball(WIDTH//2, HEIGHT//2, 7, 7, WHITE)
+    asteroid = asteroid(WIDTH//2, HEIGHT//2, 7, 7, WHITE)
  
     listOfGeeks = [geek1, geek2]
 
@@ -140,7 +150,7 @@ def main():
  
         geek1.update(geek1YFac)
         geek2.update(geek2YFac)
-        point = ball.update()
+        point = asteroid.update()
 
         if point == -1:
             geek1Score += 1
@@ -152,7 +162,7 @@ def main():
 
         geek1.display()
         geek2.display()
-        ball.display()
+        asteroid.display()
  
 
         geek1.displayScore("Geek_1 : ", 
