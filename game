@@ -1,6 +1,28 @@
 from pygame import *
 from random import randint
 from time import time as timer
+import turtle
+
+window = turtle.Screen()
+window.title("Ping-Pong")
+window.setup(width=1.0,height=1.0)
+window.bgcolor("black")
+
+border = turtle.Turtle()
+border.speed(0)
+border.color('green')
+border.begin_fill()
+border.goto(-500,300)
+border.goto(500,300)
+border.goto(500,-300)
+border.goto(-500,-300)
+border.goto(-500,300)
+border.end_fill()
+
+border.goto(0,300)
+
+
+window.mainloop()
 # фоновая музыка
 mixer.init()
 mixer.music.load('space.ogg')
@@ -183,5 +205,66 @@ def main():
  
         pygame.display.update()
         clock.tick(FPS)     
+            if finish == False:
+        # обновляем фон
+        window.blit(background, (0,0))
+        # пишем текст на экране
+        text_score = font2.render('Счёт: '+str(score),True,(200,255,200))
+        window.blit(text_score,(10,20))
+        text_lost = font2.render('Пропущено: '+str(lost),True,(200,255,200))
+        window.blit(text_lost,(10,50))
+        siths.draw(window)
+        asteroids.draw(window)
+        bullets.draw(window)
+        # производим движения спрайтов
+        jedi.update()
+        siths.update()
+        asteroids.update()
+        bullets.update()
+        # обновляем их в новом местоположении при каждой итерации цикла
+        jedi.reset()
+
+        if reload_time == True:
+            cur_time = timer()
+            if cur_time - last_time < 3:
+                reload_text = font2.render('Перезарядка!...',1,(33,0,0))
+                window.blit(reload_text,(200,350))
+            else:
+                reload_time = False
+                num_fire = 0
+
+        collides = sprite.groupcollide(siths,bullets,True,True)
+        for c in collides:
+            score += 1
+            sith = Sith(sith_img,randint(0,win_width-80),-50,randint(1,5),80,50)
+            siths.add(sith)
+ 
+        if sprite.spritecollide(jedi,siths,False):
+            lifes -= 1
+        # проигрыш
+        if lifes == 0 or lost >= 10:
+            finish = True
+            window.blit(lose,(150,200))
+        # победа
+        if score >= 20:
+            finish = True
+            window.blit(win,(150,200))
+        display.update()
+    else:
+        time.delay(3000)
+        finish = False
+        score = 0
+        lifes = 1
+        lost = 0
+        for b in bullets:
+            b.kill()
+        for s in siths:
+            s.kill()
+        for i in range(5):
+            sith = Sith(sith_img,randint(0,win_width-80),-50,randint(1,5),80,50)
+            siths.add(sith)
+        # цикл срабатывает каждую 0.05 секунды
+    time.delay(50)
+
 
     main()
